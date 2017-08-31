@@ -19,11 +19,7 @@
 
 #include "defs.h"
 
-#include <divsufsort.h>
-#include <sdsl/rmq_support.hpp>
-
 using namespace std;
-using namespace sdsl;
 
 int i = 0;
 int j = 0;
@@ -65,13 +61,6 @@ int minimal ( int a, int b, int c )
 		return b;
 	else
 		return c;
-}
-
-void pa ( double * a, int n )
-{
-	for ( int i = 0; i < n; i++ )
-		cout << a[i] << ' ';
-	cout << endl;
 }
 
 void maximalSF ( double ** text, string & sq, int N, int n, double z, int * ME )

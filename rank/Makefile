@@ -4,7 +4,7 @@ CC=     g++
  
 CFLAGS= -g -fopenmp -msse4.2 -fomit-frame-pointer -funroll-loops 
  
-LFLAGS= -std=c++11 -O3 -DNDEBUG -I ./libsdsl/include/ -L ./libsdsl/lib/ -lsdsl -ldivsufsort -ldivsufsort64 -Wl,-rpath=$(PWD)/libsdsl/lib
+LFLAGS= -std=c++11 -O3 -DNDEBUG -Wl,-rpath=$(PWD)/libsdsl/lib
 
 EXE=   index 
  

@@ -24,9 +24,6 @@
 #include "node.h"
 #include "defs.h"
 
-#include <divsufsort.h>
-#include <sdsl/rmq_support.hpp>
-
 using namespace std;
 using get_time = chrono::steady_clock;
 
@@ -119,10 +116,8 @@ int main (int argc, char ** argv )
 	}
 //	cout << "text length:" << n << endl;
 //	cout << "Finish reading input" << endl;
-
 	auto begin = get_time::now();
 //	cout << "index begin" << endl;
-
 	string sq;
 	weighted_index_building ( text, n, z, &sq );
 
@@ -143,11 +138,13 @@ int main (int argc, char ** argv )
 
 	maximalSF ( text, sq, N, n, z, ME );
 
-	int level = floor ( log ( N ) / log ( 2 ) ) + 1;
+	for ( int i = 0; i < n; i++ )
+		delete[] text[i];
+	delete[] text;
 
 	Rank_index ( sq, N, ME, SA );
 
-	int * LCP	= new int [N];
+//	int * LCP	= new int [N];
 //	SuffixArray ( N, ME, rank, SA, iSA);
 //	LCParray ( sq, N, SA, iSA, ME, LCP );
 
@@ -171,13 +168,8 @@ int main (int argc, char ** argv )
 	result.close();
 #endif
 	delete[] SA;
-	delete[] LCP;
+//	delete[] LCP;
 	delete[] ME;
-
-	for ( int i = 0; i < n; i++ )
-		delete[] text[i];
-	delete[] text;
-
 	return 0;
 }
 

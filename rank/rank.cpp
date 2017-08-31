@@ -22,14 +22,6 @@ int char2int ( char c )
 	}
 }
 
-bool same_pair ( pair<int,int> &a, pair<int,int> &b )
-{
-	if ( a.first == b.first && a.second == b.second )
-		return true;
-	else
-		return false;
-}
-
 bool same_suffix_factor ( int i1, int i2, int * ME, int cover,  vector<int> & rank )
 {
 	int i1_second = i1 + cover;
@@ -60,21 +52,20 @@ struct suffix_compar
 {
 	int * L;
 	int cover;
-	int * SA;
 	vector<int> & R;
 	int * pR;
 	int n;
 
-	suffix_compar ( int * ME, int l, int * sa, vector<int> & rank, int * rSA, int tn ):
-		L(ME), cover(l), SA(sa), R(rank), pR (rSA), n(tn) {}
+	suffix_compar ( int * ME, int l, vector<int> & rank, int * rSA, int tn ):
+		L(ME), cover(l), R(rank), pR (rSA), n(tn) {}
 	bool operator() ( int i1, int i2 )
 	{
 		if ( pR[i1] != pR[i2] )		//if previous rank is defferent, no more comparison is needed.
 			return pR[i1] < pR[i2];
 #if 1
 		bool i1_is_shorter;			//check which suffix factor is shorter.
-		int i1_1st = SA[i1];
-		int i2_1st = SA[i2];
+		int i1_1st = i1;
+		int i2_1st = i2;
 		int i1_2nd = i1_1st + cover;
 		int i2_2nd = i2_1st + cover;
 		if ( L[i1_1st] < L[i2_1st] )
@@ -144,13 +135,6 @@ struct firstSA
 	}
 };
 
-void pa ( int * a, int n )
-{
-	for ( int i = 0; i < n; i++ )
-		cout << a[i] << ' ';
-	cout << endl;
-}
-
 void Rank_index ( string & sq, int n, int * ME, int * SA )
 {
 	vector <int> base_rank ( n );
@@ -162,7 +146,6 @@ void Rank_index ( string & sq, int n, int * ME, int * SA )
 		level = max ( level, ME[i] );
 	}
 	level = floor ( log(level)/ log(2) );
-//	cout << "level=" << level << endl;
 
 	for ( i = 0; i < n; i++ )
 	{
@@ -170,13 +153,13 @@ void Rank_index ( string & sq, int n, int * ME, int * SA )
 	}
 	sort ( SA, SA+n, firstSA( base_rank ) );
 	int * rSA = new int [n];
-	rSA[0] = 0;
+	rSA[SA[0]] = 0;
 	for ( i = 1; i < n; i++ )
 	{
 		if ( base_rank[SA[i]] == base_rank[SA[i-1]] )
-			rSA[i] = j;
+			rSA[SA[i]] = j;
 		else
-			rSA[i] = ++j;
+			rSA[SA[i]] = ++j;
 	}
 	for ( int k = 1; k <= level; k++ )
 	{
@@ -199,48 +182,22 @@ void Rank_index ( string & sq, int n, int * ME, int * SA )
 			else
 				swap_rank[sort_for_rank[i]] = ++j;
 		}
-		base_rank.resize(n-l+1);
 		base_rank.swap( swap_rank );
 		vector<int>().swap(swap_rank);
 		vector<int>().swap(sort_for_rank);
 
 		//sort suffix array at k level
-		vector < int > sort_for_SA ( n );
-		for ( i = 0; i < n; i++ )
-		{
-			sort_for_SA[i] = i;
-		}
-		suffix_compar sc( ME, l, SA, base_rank, rSA,n );
-		sort ( sort_for_SA.begin(), sort_for_SA.end(), sc );
-		vector<int> temp_SA ( SA, SA+n );
-		for ( i = 0; i < n; i++ )
-		{
-			SA[i] = temp_SA[sort_for_SA[i]];
-		}
+		suffix_compar sc( ME, l, base_rank, rSA, n );
+		sort ( SA, SA+n, sc );
 		j = 0;
-		rSA[0] = 0;
+		rSA[SA[0]] = 0;
 		for ( i = 1; i < n; i++ )
 		{
 			if ( same_suffix_factor ( SA[i-1], SA[i], ME, l, base_rank ) )
-				rSA[i] = j;
+				rSA[SA[i]] = j;
 			else
-				rSA[i] = ++j;
+				rSA[SA[i]] = ++j;
 		}
-#if 0 //print & check
-		cout << "level:" << k << endl;
-		for ( i = 0; i < n-l+1; i++ )
-		{
-			cout << i <<"(" << pair_cover[i].first << "," << pair_cover[i].second << ")\t";
-		}
-		cout << endl;
-		for ( i = 0; i < n-l+1; i++ )
-			cout << text_rank[i] << '\t';
-		cout << endl;
-		for ( i = 0; i < n; i++ )
-		{
-			cout << sq.substr( SA[i], ME[SA[i]] ) << ":\t" << rSA[i] << "\tstarting:" << SA[i] << endl;
-		}
-#endif 
 	}
 	delete[] rSA;
 }

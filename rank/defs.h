@@ -16,10 +16,7 @@
 #include <string>
 #include <list>
 
-#include <sdsl/rmq_support.hpp>
-
 using namespace std;
-using namespace sdsl;
 
 #ifndef TSWITCH_H
 #define TSWITCH_H
@@ -41,7 +38,6 @@ void usage ( void );
 int read ( string filename, double *** text, int * n );
 int read_pattern ( string filename, string * pattern, int * m );
 void maximalSF ( double ** text, string & sq, int N, int n, double z,int * ME);
-int match ( string & pattern, string & text, int n, int * SA, int * LCP, int * ME, list<int> & Occ, rmq_succinct_sct<> &rmq );
 int multi_match ( string * pattern, int num_pattern, string & text, int n, int * SA, int * LCP, int * ME, list<int> & Occ );
 void LCParray ( string & x, int n, int * SA, int * iSA, int *ME, int *LCP );
 void Rank_index ( string & sq, int n, int * ME, int *SA );
