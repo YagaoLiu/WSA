@@ -1,0 +1,10 @@
+./index -z 8 -o out -m 0 -t ../../data/125k.fa
+./index -z 8 -o out -m 0 -t ../../data/250k.fa
+./index -z 8 -o out -m 0 -t ../../data/500k.fa
+./index -z 8 -o out -m 0 -t ../../data/1000k.fa
+./index -z 8 -o out -m 0 -t ../../data/1500k.fa
+./index -z 8 -o out -m 0 -t ../../data/2000k.fa
+./index -z 8 -o out -m 0 -t ../../data/2500k.fa
+./index -z 8 -o out -m 0 -t ../../data/3000k.fa
+./index -z 8 -o out -m 0 -t ../../data/3500k.fa
+./index -z 8 -o out -m 0 -t ../../data/4000k.fa
