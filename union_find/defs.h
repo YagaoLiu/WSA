@@ -45,4 +45,4 @@ void SA_LCP_index ( double ** text, const char * sq, int N, int n, double z, int
 void union_find_resort( int * SA, int * LCP, int *ME, int n );
 void maximalSF ( double ** text, string & sq, int N, int n, double z, int * ME );
 void LCParray ( string  &text, int n, int * SA, int * ME, int * LCP );
-void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & WSA );
+void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & WSA, vector<int>& WLCP );

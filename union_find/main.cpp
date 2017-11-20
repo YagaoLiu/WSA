@@ -97,8 +97,8 @@ int main (int argc, char ** argv )
 
 	auto end = get_time::now();
 	auto diff1 = end - begin;
-//	cout<<"Time for special weighted sequence:  "<< chrono::duration_cast<chrono::milliseconds>(diff1).count()<<" ms "<<endl;
-//	cout << "build suffix array index\n";
+	cout<<"Time for special weighted sequence:  "<< chrono::duration_cast<chrono::milliseconds>(diff1).count()<<" ms "<<endl;
+	cout << "build suffix array index\n";
 
 
 	int N = sq.size();
@@ -138,44 +138,43 @@ int main (int argc, char ** argv )
 
 	begin = get_time::now();
 	SA_LCP_index ( text, sq.c_str(), N, n, z, SA, LCP );
-
-	if ( mod == 3 )
+	vector<int> iSA(N,0);
+	for ( int i = 0; i < N; i++ )
+		iSA[SA[i]] = i;
+	if ( mod == 1 )
 	{
 		for ( int i = 0; i < N; i++ )
 		{
-			cout << setw(2) << i << ": " << SA[i] << ' ' << LCP[i] << '\n';
+			cout << setw(2) << i << ": " << SA[i] << ' ' << setw(2) << iSA[i] << ' ' << setw(2) << LCP[i] << '\t' << sq.substr(SA[i]) << '\n';
 		}
 	}
 #if 1
 	union_find_resort ( SA, LCP, ME, N );
-	LCParray ( sq, N, SA, ME, LCP );
+	for ( int i = 0; i < N; i++ )
+		iSA[SA[i]] = i;
+
 	vector<int> WSA;
+	vector<int> WLCP;
 	WSA.reserve ( N );
+	WLCP.reserve ( N );
 	begin =get_time:: now();
-	WeightedIndex ( n, N, SA, LCP, ME, WSA );
+	WeightedIndex ( n, N, SA, LCP, ME, WSA, WLCP );
 
 	if ( mod == 2 )
 	{//print & check
 		cout << "n=" << n << " N=" << N << endl;
-		for ( int i = 0, j=-1; i < N; i++ )
-		{
-			if ( ME[SA[i]] != 0 )
-			{
-				cout << setw(3) << ++j << ": " <<  setw(3)<< SA[i] << ", " << setw(3) << LCP[i] << ", " << sq.substr(SA[i], ME[SA[i]]) << '\n';
-			}
-		}
+		cout << sq << endl;
 		for ( int i = 0; i < WSA.size(); i++ )
 		{
-			cout << setw(3) << i << ":" << setw(3) << WSA[i] << ", " << sq.substr(WSA[i], ME[SA[i]]) << '\n';
+				cout << setw(3) << i << ": " <<  setw(3)<< WSA[i] << ", " << setw(3) << WLCP[i] << ", " << sq.substr(WSA[i], ME[WSA[i]]) << '\n';
 		}
 	}
 	if ( mod == 1 )
 	{//print & check
-//		result << sq << '\n';
-		for ( int i = 0, j = -1; i < N; i++ )
+		result << sq << '\n';
+		for ( int i = 0; i < N; i++ )
 		{
-		if ( ME[SA[i]] != 0 )
-			result << ++j << ":\t" << SA[i] << ",\t" << sq.substr(SA[i], ME[SA[i]]) << '\n';
+			result << i << ":\t" << SA[i] << '\t' << iSA[i] << '\t' << LCP[i] << '\t' << sq.substr(SA[i], ME[SA[i]]) << '\n';
 		}
 	}
 	if ( mod == 3 )

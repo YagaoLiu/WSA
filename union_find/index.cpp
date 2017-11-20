@@ -90,9 +90,10 @@ int getMax( vector<int> & arr, int n )
  
 // A function to do counting sort of arr[] according to
 // the digit represented by exp.
-void countSort(vector<int> & arr, int n, int exp)
+void countSort(vector<int> & arr, vector<int>& p, int n, int exp)
 {
-    int output[n]; // output array
+    int * output = new int [n]; // output array
+	int * position = new int [n];
     int i, count[10] = {0};
  
     // Store count of occurrences in count[]
@@ -108,18 +109,22 @@ void countSort(vector<int> & arr, int n, int exp)
     for (i = n - 1; i >= 0; i--)
     {
         output[count[ (arr[i]/exp)%10 ] - 1] = arr[i];
+		position[count[(arr[i]/exp)%10]-1] = p[i];
         count[ (arr[i]/exp)%10 ]--;
     }
  
     // Copy the output array to arr[], so that arr[] now
     // contains sorted numbers according to current digit
     for (i = 0; i < n; i++)
+	{
         arr[i] = output[i];
+		p[i] = position[i];
+	}
 }
  
 // The main function to that sorts arr[] of size n using 
 // Radix Sort
-void radixsort(vector<int> & v )
+void radixsort(vector<int> & v, vector<int>& p )
 {
     // Find the maximum number to know number of digits
     int m = getMax(v, v.size());
@@ -128,12 +133,19 @@ void radixsort(vector<int> & v )
     // of passing digit number, exp is passed. exp is 10^i
     // where i is current digit number
     for (int exp = 1; m/exp > 0; exp *= 10)
-        countSort(v, v.size(), exp);
+        countSort(v, p, v.size(), exp);
 }
 
-void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & WSA )
+void print ( vector<int>& x )
 {
-	int i = 0, j = 0;
+	for ( auto i = x.begin(); i != x.end(); i++ )
+		cout << *i << ' ';
+	cout << endl;
+}
+
+void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & WSA, vector<int>& WLCP )
+{
+	int i = 0, j = 0, k = 0;
 	vector<int> position_check;
 	position_check.reserve ( N );
 	while ( ME[SA[i]] == 0 )
@@ -141,12 +153,12 @@ void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & 
 		i++;
 	}
 	position_check.push_back ( SA[i] );
-
 	for ( i = i + 1; i < N; i++ )
 	{
 		if ( position_check.empty() )
 		{
 			position_check.push_back ( SA[i] );
+			k = i;
 		}
 		else
 		{
@@ -156,30 +168,64 @@ void WeightedIndex ( int n, int N, int * SA, int * LCP, int * ME, vector<int> & 
 			}
 			else
 			{
-				radixsort ( position_check );
-				WSA.push_back ( position_check[0] );
-				for ( auto it = ++position_check.begin(); it != position_check.end(); it++ )
+				vector<int> position;
+				vector<int> remainder;
+				position.reserve ( position_check.size() );
+				remainder.reserve ( position_check.size() );
+				for ( j = 0; j < position_check.size(); j++ )
 				{
-					if ( *it % n != *(it-1) % n )
+					remainder.push_back( position_check[j]%n );
+					position.push_back( j );
+				}
+				radixsort ( remainder, position );
+				WSA.push_back( position_check[position[0]] );
+				WLCP.push_back ( LCP[k] );
+				int lcp_counter = 0;
+				for ( j = 1; j < position_check.size(); j++ )
+				{
+					if ( remainder[j] != remainder[j-1] )
 					{
-						WSA.push_back ( *it );
+						WSA.push_back ( position_check[position[j]] );
+						lcp_counter ++;
 					}
+				}
+				while ( lcp_counter )
+				{
+					WLCP.push_back ( LCP[i-1] );
+					lcp_counter--;
 				}
 				position_check.clear();
 				position_check.push_back ( SA[i] );
+				k = i;
 			}
 		}
 	}
-	radixsort ( position_check );
-	WSA.push_back ( position_check[0] );
-	for ( auto it = ++position_check.begin(); it != position_check.end(); it++ )
+	vector<int> position;
+	vector<int> remainder;
+	position.reserve ( position_check.size() );
+	remainder.reserve ( position_check.size() );
+	for ( j = 0; j < position_check.size(); j++ )
 	{
-		if ( *it % n != *(it-1) % n )
+		remainder.push_back( position_check[j]%n );
+		position.push_back( j );
+	}
+	radixsort ( remainder, position );
+	WSA.push_back( position_check[position[0]] );
+	WLCP.push_back ( LCP[i-position_check.size()] );
+	int lcp_counter = 0;
+	for ( j = 1; j < position_check.size(); j++ )
+	{
+		if ( remainder[j] != remainder[j-1] )
 		{
-			WSA.push_back ( *it );
+			WSA.push_back ( position_check[position[j]] );
+			lcp_counter ++;
 		}
 	}
-
+	while ( lcp_counter )
+	{
+		WLCP.push_back ( LCP[N-1] );
+		lcp_counter--;
+	}
 }
 
 

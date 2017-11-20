@@ -19,6 +19,7 @@
 #include <vector>
 #include <list>
 #include <forward_list>
+#include <deque>
 #include <algorithm>
 
 using namespace std;
@@ -79,13 +80,16 @@ class UF    {
 void union_find_resort( int * SA, int * LCP, int * ME, int n )
 {
 	UF uf(n);
-	vector< forward_list <int> > SI (n);
+	vector< deque <int> > pSA (n);
+	vector< int > pLCP (n, 0);
+	vector< int > iSA (n, 0 );
 	map<int, vector<int> > lcp_map;
 	map<int, vector<int> > me_map;
 	int max_lcp = 0;
 	int max_me = 0;
 	for ( int i = 0; i < n; i++ )
 	{
+		iSA[SA[i]] = i;
 		lcp_map[LCP[i]].push_back(i);
 		if ( max_lcp < LCP[i] )
 			max_lcp = LCP[i];
@@ -111,14 +115,42 @@ void union_find_resort( int * SA, int * LCP, int * ME, int n )
 			for ( auto it = me_map[l].begin(); it != me_map[l].end(); it++ )
 			{
 				int f = uf.find( *it );
-				SI[f].push_front ( SA[*it] );
+				pSA[f].push_front ( SA[*it] );
 			}
 		}
 	}
+
 	int counter = 0;
+	int j = 0;
+	
 	for ( int i = 0; i < n; i++ )
-		for ( auto it = SI[i].begin(); it != SI[i].end(); it++ )
+	{
+		if ( counter > 0 && i > 0 && !pSA[i].empty() )
 		{
+			int k1 = SA[counter-1];
+			int k2 = pSA[i][0];
+			if ( iSA[k1] > iSA[k2] )
+			{
+				pLCP[counter] = ME[k1];
+			}
+			else
+			{
+				int rmq = LCP[++j];
+				for ( ; j <= i; j++ )
+					rmq = min ( rmq, LCP[j] );
+				pLCP[counter] = min ( rmq, min( ME[k1], ME[k2] ) );
+			}
+		}					
+		for ( auto it = pSA[i].begin(); it != pSA[i].end(); it++ )
+		{
+			if ( it != pSA[i].begin() )
+				pLCP[counter] = ME[*(it-1)];
 			SA[counter++] = *it;
 		}
+		if ( !pSA[i].empty() )	j = i;
+	}
+	for ( int i = 0; i < n; i++ )
+	{
+		LCP[i] = pLCP[i];
+	}
 }
