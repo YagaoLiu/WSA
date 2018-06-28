@@ -5,13 +5,17 @@
 
 using namespace std;
 
-vector<int>& signature( string& text, vector<int>& property, string& alphabet ){
+vector<int>& signature( PropertyString const& S, string& alphabet ){
 	sigma = alphabet.size() + 1;
+	map<char, int> char_to_int;
+	for ( int i = 0; i < alphabet.size(); i++ ){
+		char_to_int[alphabet[i]] = i+1;
+	}
 	double t = floor( log(text.size()) / log(sigma) );
 	vector<int> integer_text ( text.size() + t );
 	vector<int> sign ( text.size() );
 	for ( int i = 0; i < text.size(); i++ ){
-		integer_text[i] = alphabet.find( text[i] ) + 1;
+		integer_text[i] = char_to_int[text[i]];
 	}
 	for ( int i = text.size(); i < integer_text; i++ ){
 		integer_text[i] = 0;
