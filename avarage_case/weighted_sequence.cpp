@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <set>
+#include <iomanip> 
 #include "weighted_sequence.h"
 #include "estimation.h"
 
@@ -66,5 +67,20 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     for (PropertyString const & s : S.strings()) {
         T += s;
     }
-	PropertySuffixArray ( T, this->alphabet );
+	string const& text = T.string();
+	for ( int i = 0; i < text.size(); i++ )
+		cout << setw(3) << i;
+	cout << endl;
+	for ( char c : text ){
+		cout << setw(3) << c;
+	}
+	cout << endl;
+	weighted_index = new PropertySuffixArray ( T, this->alph );
+	for ( int i = 0; i < weighted_index->size(); i++ ){
+		int j = (*weighted_index)[i] ;
+		cout << j << text.substr( j, T.pi(j) ) << endl;
+	}
+	
 }
+
+

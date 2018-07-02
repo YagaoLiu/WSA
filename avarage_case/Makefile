@@ -8,9 +8,9 @@ LFLAGS= -std=c++11 -O3 -DNDEBUG
 
 EXE=   index 
  
-SRC=    main.cpp input.cpp estimation.cpp weighted_sequence.cpp property_string.cpp 
+SRC=    main.cpp input.cpp estimation.cpp weighted_sequence.cpp property_string.cpp PSA.cpp radixsort.cpp
 
-HD=     input.h PST.h estimation.h weighted_sequence.h property_string.h Makefile
+HD=     input.h estimation.h weighted_sequence.h property_string.h PSA.h radixsort.h Makefile
 
 # 
 # No need to edit below this line 

@@ -17,23 +17,21 @@
 #include<string>
 #include<vector>
 #include<iostream>
-#include "PST.h"
 
+#include "PSA.h"
 
 const double EPS = 1e-7;
 
 class WeightedSequence {
     std::string alph;
     std::vector<std::vector<double>> P;
-    PropertySuffixTree const* weighted_index;
+	PropertySuffixArray* weighted_index;
     
     friend std::istream & operator >> (std::istream& input, WeightedSequence &X);
 
 public:
     WeightedSequence(): alph(), P(), weighted_index(NULL){}
-    ~WeightedSequence() {
-        if (weighted_index) delete weighted_index;
-    }
+    ~WeightedSequence(){}
     
     std::size_t length() const { return P.size(); }
     std::size_t sigma() const { return alph.size(); }
@@ -41,6 +39,6 @@ public:
     char symbol(size_t a) const { return alph[a]; }
     
     void build_index(double z, bool quiet, std::ostream& out);   
-
+	void print();
 };
 

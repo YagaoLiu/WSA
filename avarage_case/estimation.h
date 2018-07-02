@@ -1,5 +1,3 @@
-#include "PST.h"
-#include "PST.h"
 /**
 *    Weighted Index
 *    Copyright (C) 2017 Carl Barton, Tomasz Kociumaka, Chang Liu, Solon P. Pissis and Jakub Radoszewski.
@@ -19,7 +17,6 @@
 #include <vector>
 #include <string>
 #include "input.h"
-#include "PST.h"
 #include "weighted_sequence.h"
 
 

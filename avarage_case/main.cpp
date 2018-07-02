@@ -39,19 +39,6 @@ int main (int argc, char ** argv ) {
     
     W.build_index(st.z, st.quiet, output);
         
-    while ( true )  {
-        string pattern;
-        if (!(patterns >> pattern)) break;
-        output << pattern << ": ";
-        if (!W.contains(pattern)) {
-            output << "Not found\n";
-        } else {
-            for (auto p : W.occurrences(pattern)) {
-                cout << p << " ";
-            }
-            cout << endl;
-        }
-    }
     return 0;
 }
 
