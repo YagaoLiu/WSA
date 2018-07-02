@@ -22,6 +22,7 @@
 class PropertyString {
     std::string S;
     std::vector<int> _pi;
+	std::string alphabet;
     
     friend std::ostream& operator << (std::ostream& out, PropertyString const &S);
 

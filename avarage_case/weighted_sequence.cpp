@@ -66,5 +66,5 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     for (PropertyString const & s : S.strings()) {
         T += s;
     }
-
+	PropertySuffixArray ( T, this->alphabet );
 }
