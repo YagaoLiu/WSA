@@ -68,6 +68,7 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
         T += s;
     }
 	string const& text = T.string();
+#if 0
 	for ( int i = 0; i < text.size(); i++ )
 		cout << setw(3) << i;
 	cout << endl;
@@ -80,7 +81,7 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
 		int j = (*weighted_index)[i] ;
 		cout << j << text.substr( j, T.pi(j) ) << endl;
 	}
-	
+#endif
 }
 
 

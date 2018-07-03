@@ -12,28 +12,15 @@
 
 using namespace std;
 
-bool PropertySuffixArray::pair_compare::operator() ( int i1, int i2 ){
-	if ( r[i1] != r[i2] ){
-		return r[i1] < r[i2];
-	}
-	else{
-		return s[i1] < s[i2];
-	}
-}
-
 PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	int length = S.length();
 	vector<int> const& property = S.property();
-	int sigma = 1;
-	while ( sigma < (int) (alphabet.size()+1) ){
-		sigma *= 2;
-	}
-
+	int sigma = ceil( log(alphabet.size()+1) / log(2) );
 	int max_pi = 0;
 	for ( int i : property ){
 		if ( i > max_pi ) max_pi = i;
 	}	
-	double t = floor( log(length)/log(sigma) );
+	int t = floor( log(length)/log( 1<<sigma ) );
 	PSA.resize ( length );
 	iota( PSA.begin(), PSA.end(), 0 );
 
@@ -45,68 +32,68 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	for ( int i = 0; i < length; i++ ){
 		integer_text[i] = char_to_int[S[i]];
 	}
-	for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << property[i]; 
-	}
-	cout << endl;	
+
+//	for ( int i = 0; i < length; i++ ){
+//		cout << setw(3) << property[i]; 
+//	}
+//	cout << endl;	
 
 	vector<int> sign = signature( integer_text, property, length, t, sigma );
-	for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << sign[i];
-	}
-	cout << endl;
-	vector<int> sort_sign ( sign );
+//	for ( int i = 0; i < length; i++ ){
+//		cout << setw(3) << sign[i];
+//	}
+//	cout << endl;
+	vector<int> sign_original ( sign );
 	vector<int> index ( length );
-	vector<int> rank ( length );
+	vector<int> rank;
+	rank.reserve(length);
+	rank.push_back(0);
 	iota ( index.begin(), index.end(), 0 );
-	radixsort ( sort_sign, PSA, length );
-	int r = 0;
-	rank[index[0]] = r;
+	radixsort ( sign.begin(), PSA.begin(), length );
 	for ( int i = 1; i < length; i++ ){
-		if ( sort_sign[i] == sort_sign[i-1] ){
-			rank[PSA[i]] = r;
-		}
-		else{
-			rank[PSA[i]] = ++r;
+		if ( sign[i] != sign[i-1] ){
+			rank.push_back(i);
 		}
 	}
-	for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << PSA[i];
-	}
-	cout << endl;
-	for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << rank[PSA[i]];
-	}
-	cout << endl;
+	rank.push_back ( length-1 );
+//	for ( int i = 0; i < length; i++ ){
+//		cout << setw(3) << PSA[i];
+//	}
+//	cout << endl;
+//	cout << "into loop" << endl;
 	for ( int level = 0; level < log(length)/log(2); level++ ){
 		int tt = t * (level+1);
 		if( tt > max_pi ) break;
+		vector<int> next_sign (sign);
 		for ( int i = 0; i < length; i++ ){
-			int updater = pow( sigma, max(property[i]-tt, 0) ) -1;
-			sign[i] = sign[i] && updater;
-		}
-		sort ( PSA.begin(), PSA.end(), pair_compare( sign, rank, property, tt ) );
-		vector<int> next_rank (length);
-		r = 0;
-		next_rank[PSA[0]] = r;
-		for ( int i = 1; i < length; i++ ){
-			//compute rank
-			if ( rank[PSA[i]] == rank[PSA[i-1]] && sign[PSA[i]] == sign[PSA[i-1]] ){
-				next_rank[PSA[i]] = r;
+			if ( PSA[i] > length-1-tt ){
+				sign[i] = 0;
+			}
+			if ( property[PSA[i]] <= tt ){
+				sign[i] = 0;
+			}
+			if ( property[PSA[i]] < tt + t ){
+				int remover = ( 1<<sigma*t) - ( 1<<(sigma*(t-(property[PSA[i]]-tt))));
+				sign[i] = sign_original[PSA[i]+tt];
+				sign[i] = sign[i] & remover;
 			}
 			else{
-				next_rank[PSA[i]] = ++r;
+				sign[i] = sign_original[PSA[i]+tt];
 			}
 		}
-		rank = next_rank;
-		for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << PSA[i];
-	}
-	cout << endl;
-	for ( int i = 0; i < length; i++ ){
-		cout << setw(3) << rank[PSA[i]];
-	}
-	cout << endl;
+		for ( int r = 0; r < (int) rank.size()-1; r++ ){
+			if ( rank[r+1]-rank[r] > 1 ){
+				radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
+			}
+		}
+		rank.clear();
+		rank.push_back(0);
+		for ( int i = 1; i < length; i++ ){
+			if ( sign[i] != sign[i-1] ){
+				rank.push_back(i);
+			}
+		}
+		rank.push_back ( length-1 );
 	}
 }
 
@@ -114,14 +101,14 @@ vector<int> PropertySuffixArray::signature( vector<int>& text, vector<int> const
 	vector<int> sign (n);
 	sign[0] = 0;
 	for ( int j = 0; j < t; j++ ){
-		sign[0] += text[j] * pow(sigma, t-j-1);
+		sign[0] += text[j] * (1 << (sigma*( t-j-1) ) );
 	}
 	for ( int i = 1; i < n; i++ ){
-		sign[i] = ( sign[i-1] - text[i-1] * pow(sigma, t-1) ) * sigma + text[i+t-1];
+		sign[i] = ( sign[i-1] - text[i-1] * ( 1<<(sigma*(t-1)) ) ) * (1<<sigma) + text[i+t-1];
 	}
 	for ( int i = 0; i < n; i++ ){
 		if ( property[i] < t ){
-			int remove = pow(sigma,t) - pow(sigma, t-property[i] );
+			int remove = (1<<(sigma*t)) - (1<<(sigma*(t-property[i])));
 			sign[i] = sign[i]&remove;
 		}
 	}
