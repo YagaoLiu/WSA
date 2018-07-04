@@ -6,9 +6,12 @@
 #include <numeric>
 #include <bitset>
 #include <algorithm>
+#include <chrono>
 
 #include "radixsort.h"
 #include "PSA.h"
+
+using get_time = chrono::steady_clock;
 
 using namespace std;
 
@@ -16,13 +19,14 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	int length = S.length();
 	vector<int> const& property = S.property();
 	int sigma = ceil( log(alphabet.size()+1) / log(2) );
-	int max_pi = 0;
-	for ( int i : property ){
-		if ( i > max_pi ) max_pi = i;
-	}	
 	int t = floor( log(length)/log( 1<<sigma ) );
 	PSA.resize ( length );
 	iota( PSA.begin(), PSA.end(), 0 );
+	int max_pi = 0;
+	for ( int i : property ){
+		if ( i > max_pi ) max_pi = i;
+	}
+	cout << "max property:" << max_pi << endl;
 
 	map<char,int> char_to_int;
 	for( int i = 0; i < (int) alphabet.size(); i++ ){
@@ -61,10 +65,9 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 //	}
 //	cout << endl;
 //	cout << "into loop" << endl;
+	cout << "max level:" << log(length) / log(2) << endl;
 	for ( int level = 0; level < log(length)/log(2); level++ ){
 		int tt = t * (level+1);
-		if( tt > max_pi ) break;
-		vector<int> next_sign (sign);
 		for ( int i = 0; i < length; i++ ){
 			if ( PSA[i] > length-1-tt ){
 				sign[i] = 0;
@@ -93,11 +96,15 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 				rank.push_back(i);
 			}
 		}
+		cout << tt << endl;
+		if ( tt > max_pi ) break;
+		if ( rank.size() >= length ) break;
 		rank.push_back ( length-1 );
 	}
 }
 
 vector<int> PropertySuffixArray::signature( vector<int>& text, vector<int> const& property, int n, int t, int sigma ){
+	auto begin = get_time::now();
 	vector<int> sign (n);
 	sign[0] = 0;
 	for ( int j = 0; j < t; j++ ){
@@ -112,6 +119,9 @@ vector<int> PropertySuffixArray::signature( vector<int>& text, vector<int> const
 			sign[i] = sign[i]&remove;
 		}
 	}
+	auto end = get_time::now();
+	auto diff = end - begin;
+	cout << "Time for signature:" << chrono::duration_cast<chrono::seconds>(diff).count() << "s" << endl;
 	return sign;
 }
 

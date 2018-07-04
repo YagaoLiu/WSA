@@ -117,10 +117,12 @@ int main (int argc, char ** argv )
 
 	if ( mod == 3 )
 	{
+		string MEstr;
+		cout << "Input L array:" << endl;
+		cin >> MEstr;
 		for ( int i = 0; i < N; i++ )
 		{
-			cout << "ME[" << i << "]:";
-			cin >> ME[i];
+			ME[i] = MEstr[i]-'0';
 		}
 	}
 	else

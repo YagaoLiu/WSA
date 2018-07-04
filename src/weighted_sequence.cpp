@@ -19,7 +19,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <set>
-#include <iomanip> 
 #include "weighted_sequence.h"
 #include "estimation.h"
 
@@ -67,14 +66,14 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     for (PropertyString const & s : S.strings()) {
         T += s;
     }
-	string const& text = T.string();
-	weighted_index = new PropertySuffixArray ( T, this->alph );
-#if 1
-	for ( int i = 0; i < weighted_index->size(); i++ ){
-		int j = (*weighted_index)[i];
-		result << text.substr( j, T.pi(j) ) << '\n';
-	}
-#endif
+    weighted_index = new PropertySuffixArray(T);
+    
+    if (!quiet) {
+        auto end = get_time::now();
+        auto diff = end - begin;
+        result << "Weighted Index Constructed in " << chrono::duration_cast<chrono::milliseconds>(diff).count() << " milliseconds."<< endl;
+        result << endl << "Property Suffix Tree:" << endl << *weighted_index;
+        result << endl << "Answers to queries:" << endl;
+    }
 }
-
 
