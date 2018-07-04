@@ -15,6 +15,10 @@ using get_time = chrono::steady_clock;
 
 using namespace std;
 
+void PropertySuffixArray::NextRank(vector<int>& sign){
+
+}
+
 PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	int length = S.length();
 	vector<int> const& property = S.property();
@@ -55,7 +59,7 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	iota ( index.begin(), index.end(), 0 );
 	radixsort ( sign.begin(), PSA.begin(), length );
 	for ( int i = 1; i < length; i++ ){
-		if ( sign[i] != sign[i-1] ){
+		if ( sign[i] != sign[i-1] && sign[i] != 0 ){
 			rank.push_back(i);
 		}
 	}
@@ -67,6 +71,9 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 //	cout << "into loop" << endl;
 	cout << "max level:" << log(length) / log(2) << endl;
 	for ( int level = 0; level < log(length)/log(2); level++ ){
+		vector<int> next_rank;
+		next_rank.reserve( rank.size() );
+		next_rank.push_back[0];
 		int tt = t * (level+1);
 		for ( int i = 0; i < length; i++ ){
 			if ( PSA[i] > length-1-tt ){
@@ -87,6 +94,11 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 		for ( int r = 0; r < (int) rank.size()-1; r++ ){
 			if ( rank[r+1]-rank[r] > 1 ){
 				radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
+				for ( int i = rank[r]; i < rank[r+1]; r++ ){
+					if ( sign[i] != sign[i-1] ){
+						rank.push_back(i);
+					}
+				}
 			}
 		}
 		rank.clear();
