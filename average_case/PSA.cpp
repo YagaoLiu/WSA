@@ -15,15 +15,14 @@ using get_time = chrono::steady_clock;
 
 using namespace std;
 
-void PropertySuffixArray::NextRank(vector<int>& sign){
-
-}
-
 PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
+	cout << sizeof(int) << endl;
+	const string& text = S.string();
 	int length = S.length();
 	vector<int> const& property = S.property();
 	int sigma = ceil( log(alphabet.size()+1) / log(2) );
 	int t = floor( log(length)/log( 1<<sigma ) );
+	cout << "t=" << t << endl;
 	PSA.resize ( length );
 	iota( PSA.begin(), PSA.end(), 0 );
 	int max_pi = 0;
@@ -40,67 +39,59 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	for ( int i = 0; i < length; i++ ){
 		integer_text[i] = char_to_int[S[i]];
 	}
-
-//	for ( int i = 0; i < length; i++ ){
-//		cout << setw(3) << property[i]; 
-//	}
-//	cout << endl;	
-
 	vector<int> sign = signature( integer_text, property, length, t, sigma );
-//	for ( int i = 0; i < length; i++ ){
-//		cout << setw(3) << sign[i];
-//	}
-//	cout << endl;
 	vector<int> sign_original ( sign );
-	vector<int> index ( length );
 	vector<int> rank;
 	rank.reserve(length);
 	rank.push_back(0);
-	iota ( index.begin(), index.end(), 0 );
+	for ( int i = 0; i < 10; i ++ )
+		cout << sign[i] << endl;
 	radixsort ( sign.begin(), PSA.begin(), length );
+	for ( int i = 0; i < 10; i++ )
+		cout << sign[i] << endl;
 	for ( int i = 1; i < length; i++ ){
-		if ( sign[i] != sign[i-1] && sign[i] != 0 ){
+		if ( sign[i] != sign[i-1] ){
 			rank.push_back(i);
 		}
 	}
-	rank.push_back ( length-1 );
-//	for ( int i = 0; i < length; i++ ){
-//		cout << setw(3) << PSA[i];
-//	}
-//	cout << endl;
-//	cout << "into loop" << endl;
-	cout << "max level:" << log(length) / log(2) << endl;
-	for ( int level = 0; level < log(length)/log(2); level++ ){
-		vector<int> next_rank;
-		next_rank.reserve( rank.size() );
-		next_rank.push_back[0];
+	rank.push_back ( length );
+//	for ( int level = 0; level < log(length)/log(2); level++ ){
+	for ( int level = 0; level < length; level++ ){
 		int tt = t * (level+1);
+		cout << "tt:" << tt << endl;
 		for ( int i = 0; i < length; i++ ){
-			if ( PSA[i] > length-1-tt ){
-				sign[i] = 0;
-			}
+			if ( (tt== 12) && (i == 745355) ) cout << sign[745355] << endl;
 			if ( property[PSA[i]] <= tt ){
-				sign[i] = 0;
+				sign[PSA[i]] = 0;
 			}
-			if ( property[PSA[i]] < tt + t ){
-				int remover = ( 1<<sigma*t) - ( 1<<(sigma*(t-(property[PSA[i]]-tt))));
-				sign[i] = sign_original[PSA[i]+tt];
-				sign[i] = sign[i] & remover;
+			else if ( property[PSA[i]] < tt + t ){
+				int remover = ( 1<<sigma*t) - ( 1<<(sigma*max(t-(property[PSA[i]]-tt), 0)));
+				sign[PSA[i]] = sign_original[PSA[i]+tt];
+				sign[PSA[i]] = sign[PSA[i]] & remover;
 			}
 			else{
-				sign[i] = sign_original[PSA[i]+tt];
+				sign[PSA[i]] = sign_original[PSA[i]+tt];
+				if ( (tt== 12) && (PSA[i] == 745355) ) cout << "else" << sign[PSA[i]] << ' ' << sign_original[PSA[i]+tt] << endl;
 			}
 		}
+				if ( tt == 12 ) cout << "here" << sign[745355] <<  endl;
+		bool break_point = true;
+		int n = 0;
 		for ( int r = 0; r < (int) rank.size()-1; r++ ){
-			if ( rank[r+1]-rank[r] > 1 ){
-				radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
-				for ( int i = rank[r]; i < rank[r+1]; r++ ){
-					if ( sign[i] != sign[i-1] ){
-						rank.push_back(i);
-					}
+			bool sort_check = false;
+			for ( int i = rank[r]; i < rank[r+1]; i++ ){
+				if ( sign[i] != 0 ){
+					sort_check = true;
 				}
 			}
+			if ( (rank[r+1]-rank[r] > 1) ){
+						radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
+						break_point = false;
+						n += rank[r+1]-rank[r];
+			}
 		}
+		if ( break_point ) break;
+		if ( tt > max_pi ) break;
 		rank.clear();
 		rank.push_back(0);
 		for ( int i = 1; i < length; i++ ){
@@ -108,10 +99,13 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 				rank.push_back(i);
 			}
 		}
-		cout << tt << endl;
-		if ( tt > max_pi ) break;
-		if ( rank.size() >= length ) break;
-		rank.push_back ( length-1 );
+		rank.clear();
+		rank.push_back(0);
+		for ( int i = 1; i < length; i++ ){
+				if ( sign[i] != sign[i-1] )
+					rank.push_back(i);
+		}
+		rank.push_back ( length );
 	}
 }
 

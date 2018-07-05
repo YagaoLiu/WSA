@@ -19,7 +19,6 @@ int getMax(pos arr, int n)
 // the digit represented by exp.
 void countSort(pos arr, pos ind, int n, int exp)
 {
-	vector<int> output(n); // output array
 	vector<int> index(n);
 	int i, count[10] = {0};
 
@@ -35,7 +34,6 @@ void countSort(pos arr, pos ind, int n, int exp)
 	// Build the output array
 	for (i = n - 1; i >= 0; i--)
 	{
-		output[count[ (arr[i]/exp)%10 ] - 1] = *(arr+i);
 		index[count[ (arr[i]/exp)%10 ] - 1] = *(ind+i);
 		count[ (arr[i]/exp)%10 ]--;
 	}
@@ -43,7 +41,6 @@ void countSort(pos arr, pos ind, int n, int exp)
 	// Copy the output array to arr[], so that arr[] now
 	// contains sorted numbers according to current digit
 	for (i = 0; i < n; i++){
-		*(arr+i) = output[i];
 		*(ind+i) = index[i];
 	}
 }

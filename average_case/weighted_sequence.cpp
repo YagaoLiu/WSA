@@ -69,10 +69,11 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     }
 	string const& text = T.string();
 	weighted_index = new PropertySuffixArray ( T, this->alph );
-#if 1
+#if 1 
 	for ( int i = 0; i < weighted_index->size(); i++ ){
 		int j = (*weighted_index)[i];
-		result << text.substr( j, T.pi(j) ) << '\n';
+		if ( T.pi(j) > 0 )
+			result << j << ' ' << text.substr( j, T.pi(j) ) << '\n';
 	}
 #endif
 }
