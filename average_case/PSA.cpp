@@ -42,13 +42,11 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 	vector<int> sign = signature( integer_text, property, length, t, sigma );
 	vector<int> sign_original ( sign );
 	vector<int> rank;
+	vector<int> next_rank;
 	rank.reserve(length);
+	next_rank.reserve(length);
 	rank.push_back(0);
-	for ( int i = 0; i < 10; i ++ )
-		cout << sign[i] << endl;
 	radixsort ( sign.begin(), PSA.begin(), length );
-	for ( int i = 0; i < 10; i++ )
-		cout << sign[i] << endl;
 	for ( int i = 1; i < length; i++ ){
 		if ( sign[i] != sign[i-1] ){
 			rank.push_back(i);
@@ -58,59 +56,53 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet){
 //	for ( int level = 0; level < log(length)/log(2); level++ ){
 	for ( int level = 0; level < length; level++ ){
 		int tt = t * (level+1);
-		cout << "tt:" << tt << endl;
+//		cout << "tt:" << tt << endl;
 		for ( int i = 0; i < length; i++ ){
-			if ( (tt== 12) && (i == 745355) ) cout << sign[745355] << endl;
 			if ( property[PSA[i]] <= tt ){
-				sign[PSA[i]] = 0;
+				sign[i] = 0;
 			}
 			else if ( property[PSA[i]] < tt + t ){
 				int remover = ( 1<<sigma*t) - ( 1<<(sigma*max(t-(property[PSA[i]]-tt), 0)));
-				sign[PSA[i]] = sign_original[PSA[i]+tt];
-				sign[PSA[i]] = sign[PSA[i]] & remover;
+				sign[i] = sign_original[PSA[i]+tt];
+				sign[i] = sign[PSA[i]] & remover;
 			}
 			else{
-				sign[PSA[i]] = sign_original[PSA[i]+tt];
-				if ( (tt== 12) && (PSA[i] == 745355) ) cout << "else" << sign[PSA[i]] << ' ' << sign_original[PSA[i]+tt] << endl;
+				sign[i] = sign_original[PSA[i]+tt];
 			}
 		}
-				if ( tt == 12 ) cout << "here" << sign[745355] <<  endl;
 		bool break_point = true;
 		int n = 0;
 		for ( int r = 0; r < (int) rank.size()-1; r++ ){
-			bool sort_check = false;
-			for ( int i = rank[r]; i < rank[r+1]; i++ ){
-				if ( sign[i] != 0 ){
-					sort_check = true;
+			if ( rank[r+1]-rank[r] > 1 ){
+				if ( equal(sign.begin()+rank[r]+1, sign.begin()+rank[r+1], sign.begin()+rank[r] ) && ( sign[rank[r]] == 0 ) ){}
+				else{
+					if ( rank[r] == 0 ) next_rank.push_back(0);
+					radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
+					break_point = false;
+					n += rank[r+1]-rank[r];
+					if ( sign[rank[r]] != 0 ) next_rank.push_back( rank[r] );
+					for ( int i = rank[r]; i < rank[r+1]; i++ ){
+						if ( sign[i] != sign[i-1] ) next_rank.push_back(i);
+					}
+					if ( rank[r+1] == length ) next_rank.push_back(length);				
 				}
-			}
-			if ( (rank[r+1]-rank[r] > 1) ){
-						radixsort ( sign.begin()+rank[r], PSA.begin()+rank[r], rank[r+1]-rank[r] );
-						break_point = false;
-						n += rank[r+1]-rank[r];
 			}
 		}
 		if ( break_point ) break;
 		if ( tt > max_pi ) break;
-		rank.clear();
-		rank.push_back(0);
-		for ( int i = 1; i < length; i++ ){
-			if ( sign[i] != sign[i-1] ){
-				rank.push_back(i);
+		rank = next_rank;
+		next_rank.clear();
+		if ( tt == 42 ){
+		cout << "after sort" << endl;
+			for ( int i = 6430; i < 6440; i++ ){
+				cout << i << ":" << PSA[i] << ":" << sign[i] << ":" << text.substr(PSA[i], property[PSA[i]] ) << endl;
 			}
+		cout << endl;
 		}
-		rank.clear();
-		rank.push_back(0);
-		for ( int i = 1; i < length; i++ ){
-				if ( sign[i] != sign[i-1] )
-					rank.push_back(i);
-		}
-		rank.push_back ( length );
 	}
 }
 
 vector<int> PropertySuffixArray::signature( vector<int>& text, vector<int> const& property, int n, int t, int sigma ){
-	auto begin = get_time::now();
 	vector<int> sign (n);
 	sign[0] = 0;
 	for ( int j = 0; j < t; j++ ){
@@ -125,9 +117,6 @@ vector<int> PropertySuffixArray::signature( vector<int>& text, vector<int> const
 			sign[i] = sign[i]&remove;
 		}
 	}
-	auto end = get_time::now();
-	auto diff = end - begin;
-	cout << "Time for signature:" << chrono::duration_cast<chrono::seconds>(diff).count() << "s" << endl;
 	return sign;
 }
 
