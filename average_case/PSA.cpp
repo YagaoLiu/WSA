@@ -26,6 +26,7 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet):
 		if ( i > max_pi ) max_pi = i;
 	}
 
+	cout << text.substr(860412, 48) << endl << text.substr(985412, 48) << endl;
 	map<char,int> char_to_int;
 	for( int i = 0; i < (int) alphabet.size(); i++ ){
 		char_to_int[alphabet[i]] = i+1;
@@ -35,6 +36,7 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet):
 		integer_text[i] = char_to_int[S[i]];
 	}
 	vector<word> sign_base = signature( integer_text );
+
 	vector<word> sign ( sign_base );
 	vector<int> rank(length);
 	vector<int> next_rank(length);
@@ -54,9 +56,17 @@ PropertySuffixArray::PropertySuffixArray( PropertyString & S, string& alphabet):
 //	for ( int level = 0; level < length; level++ ){
 	for ( int tt = t; tt < max_pi; tt = tt << 1 ){
 		cout << tt << endl;
+		cout << "sign base check:\n";
+		for ( int i = 860412; i < 860465; i+=tt )
+			cout << sign_base[i] << endl;
+		cout << endl;
+		for ( int i = 985412; i < 985462; i+=tt )
+			cout << sign_base[i] << endl;
+		cout << "end of check\n";
 		sign_update ( sign, sign_base, tt );
 		int l = 1;
 		r = 0;
+		cout << PSA[6430]+tt << '\t' << PSA[6431]+tt << endl;
 		cout << "sign check:" << sign[6430] << '\t' << sign[6431] << endl;
 		cout << "origin sign check:" << sign_base[PSA[6430]+tt] << '\t' << sign_base[PSA[6431]+tt] << endl;
 		for ( int i = 1; i < length+1; i++ ){
