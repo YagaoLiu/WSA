@@ -8,7 +8,7 @@ using namespace std;
 // A utility function to get maximum value in arr[]
 int getMax(pos arr, int n)
 {
-	int mx = *arr;
+	unsigned long int mx = *arr;
 	for (int i = 1; i < n; i++)
 		if (*(arr+i) > mx)
 			mx = *(arr+i);
@@ -17,9 +17,9 @@ int getMax(pos arr, int n)
 
 // A function to do counting sort of arr[] according to
 // the digit represented by exp.
-void countSort(pos arr, pos ind, int n, int exp)
+void countSort(pos arr, ind_pos ind, int n, int exp)
 {
-	vector<int> output(n);
+	vector<unsigned long int> output(n);
 	vector<int> index(n);
 	int i, count[10] = {0};
 
@@ -50,7 +50,7 @@ void countSort(pos arr, pos ind, int n, int exp)
 
 // The main function to that sorts arr[] of size n using 
 // Radix Sort
-void radixsort( pos arr, pos ind, int n)
+void radixsort( pos arr, ind_pos ind, int n)
 {
 	// Find the maximum number to know number of digits
 	int m = getMax(arr, n);

@@ -2,5 +2,6 @@
 
 using namespace std;
 
-typedef vector<int>::iterator pos;
-void radixsort( pos arr, pos ind, int n );
+typedef vector<unsigned long int>::iterator pos;
+typedef vector<int>::iterator ind_pos;
+void radixsort( pos arr, ind_pos ind, int n );

@@ -68,12 +68,16 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
         T += s;
     }
 	string const& text = T.string();
+	begin = get_time::now();
 	weighted_index = new PropertySuffixArray ( T, this->alph );
-#if 1 
+	auto end = get_time::now();
+	auto diff = end - begin;
+	cout << "Time:" << chrono::duration_cast<chrono::milliseconds>(diff).count() << "s" << endl;
+#if 0 
 	for ( int i = 0; i < weighted_index->size(); i++ ){
 		int j = (*weighted_index)[i];
 		if ( T.pi(j) > 0 )
-			result << text.substr( j, T.pi(j) ) << '\n';
+			result << j << text.substr( j, T.pi(j) ) << '\n';
 	}
 #endif
 }
