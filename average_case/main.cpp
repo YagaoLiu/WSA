@@ -33,7 +33,8 @@ int main (int argc, char ** argv ) {
 	st.quiet = true;
 	ifstream text ( st.text );
 	ifstream patterns ( st.patterns );
-	ofstream output ( st.output );
+	ofstream output;
+	output.open ( st.output, ios_base::app );
     WeightedSequence W;
     text >> W;
     

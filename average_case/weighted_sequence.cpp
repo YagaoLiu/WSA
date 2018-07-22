@@ -56,6 +56,7 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     auto begin = get_time::now();
     
     Estimation S(*this, z);
+/*
     if (!quiet) {
         auto end = get_time::now();
         auto diff = end - begin;
@@ -63,13 +64,19 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
         result << z << "-estimation:" << endl << S;
         result << endl;
     }
+	*/
     PropertyString T;
     for (PropertyString const & s : S.strings()) {
         T += s;
     }
-	string const& text = T.string();
+//	string const& text = T.string();
+	begin = get_time::now();
 	weighted_index = new PropertySuffixArray ( T, this->alph );
-#if 1 
+	auto end = get_time::now();
+	unsigned int length  = weighted_index->size();
+	result << "z-string length:" << length/1000000 << "MB\n";
+	result << "Time:" << chrono::duration_cast<chrono::milliseconds>(end-begin).count() << "ms\n";
+#if 0 
 	for ( int i = 0; i < weighted_index->size(); i++ ){
 		int j = (*weighted_index)[i];
 		if ( T.pi(j) > 0 )

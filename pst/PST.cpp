@@ -44,7 +44,7 @@ void PropertySuffixTree::stNode::list(vector<int>& l) const {
 
 
 void PropertySuffixTree::stNode::print(ostream &out, int d) const {
-    for (int i = 0; i < d; ++i) out << "   ";
+    for (int i = 0; i < d; ++i) out << " ";
     if (d >= 0) for (auto it = begin; it != end; ++it) out << *it;
     d += end-begin;
     for (auto const &l : labels) out << " " << l;

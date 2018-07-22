@@ -15,15 +15,14 @@
 #pragma once
 #include <fstream>
 #include <iostream>
-#include <string>
 
 struct Settings {
 	double z;
-	std::string text;
-	std::string patterns;
-	std::string output;
+	std::ifstream text;
+	std::ifstream patterns;
+	std::ofstream output;
     bool quiet;
     Settings();
 };
 
-Settings decode_switches ( int argc, char * argv[] );
+Settings decode_switches ( int argc, char * argv[]);

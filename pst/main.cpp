@@ -25,20 +25,15 @@ using namespace std;
 
 int main (int argc, char ** argv ) {
     Settings st = decode_switches(argc, argv);
-#if 0
     istream& text = st.text.is_open()?st.text:cin;
     istream& patterns = st.patterns.is_open()?st.patterns:cin;
     ostream& output = st.output.is_open()?st.output:cout;
-#endif
-	st.quiet = true;
-	ifstream text ( st.text );
-	ifstream patterns ( st.patterns );
-	ofstream output ( st.output );
+    
     WeightedSequence W;
     text >> W;
     
     W.build_index(st.z, st.quiet, output);
-        
+       /* 
     while ( true )  {
         string pattern;
         if (!(patterns >> pattern)) break;
@@ -47,11 +42,12 @@ int main (int argc, char ** argv ) {
             output << "Not found\n";
         } else {
             for (auto p : W.occurrences(pattern)) {
-                cout << p << " ";
+                output << p << " ";
             }
-            cout << endl;
+            output << endl;
         }
     }
+	*/
     return 0;
 }
 

@@ -20,7 +20,7 @@
 #include "PST.h"
 
 
-const double EPS = 1e-7;
+const double EPS = 1e-4;
 
 class WeightedSequence {
     std::string alph;

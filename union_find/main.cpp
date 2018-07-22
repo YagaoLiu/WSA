@@ -61,29 +61,15 @@ int main (int argc, char ** argv )
 			text_file = sw.text_file_name;
 			output_file = sw.output_file_name;
 			z = sw.z;
-		if ( sw.mod < 0 )
-		{
-			cout << "Error: Wrong mod select!\n";
-			return 0;
-		}
-		else
-		{
-			mod = sw.mod;
-		}
-		
 	}
 
 	/* read input */
-	if ( mod != 3 )
-	{
-		if ( !read ( text_file, &text, &n ) )
+		if ( !read ( text_file, &text, n ) )
 		{
 			cout << "Error: Failed to read input!\n";
 			return 0;
 		}
-	}
 
-#if 1 
 //	cout << "text length:" << n << endl;
 //	cout << "Finish reading input" << endl;
 
@@ -92,50 +78,22 @@ int main (int argc, char ** argv )
 //	cout << "index begin" << endl;
 
 	string sq;
-	if ( mod != 3 )
 		weighted_index_building ( text, n, z, &sq );
 
 	auto end = get_time::now();
 	auto diff1 = end - begin;
 	cout<<"Time for special weighted sequence:  "<< chrono::duration_cast<chrono::milliseconds>(diff1).count()<<" ms "<<endl;
-	cout << "build suffix array index\n";
-
 
 	int N = sq.size();
-	result << "zstrings length:" << N/1000000 << " MB\n";
-	if ( mod == 3 )
-	{
-		cout << "Input string:" << endl;
-		cin >> sq;
-		N = sq.size();
-	}
 
 #if 1 
 	int * SA	= new int [N];
 	int * LCP	= new int [N];
 	int * ME	= new int [N];
-
-	if ( mod == 3 )
-	{
-		string MEstr;
-		cout << "Input L array:" << endl;
-		cin >> MEstr;
-		for ( int i = 0; i < N; i++ )
-		{
-			ME[i] = MEstr[i]-'0';
-		}
-	}
-	else
-	{
 		maximalSF ( text, sq, N, n, z, ME );	
-	}
-	
-	if ( mod != 3 )
-	{
 		for ( int i = 0; i < n; i++ )
 			delete[] text[i];
 		delete[] text;
-	}
 #endif
 
 	begin = get_time::now();
@@ -143,14 +101,6 @@ int main (int argc, char ** argv )
 	vector<int> iSA(N,0);
 	for ( int i = 0; i < N; i++ )
 		iSA[SA[i]] = i;
-	if ( mod == 1 )
-	{
-		for ( int i = 0; i < N; i++ )
-		{
-			cout << setw(2) << i << ": " << SA[i] << ' ' << setw(2) << iSA[i] << ' ' << setw(2) << LCP[i] << '\t' << sq.substr(SA[i]) << '\n';
-		}
-	}
-#if 1
 	union_find_resort ( SA, LCP, ME, N );
 	for ( int i = 0; i < N; i++ )
 		iSA[SA[i]] = i;
@@ -162,35 +112,10 @@ int main (int argc, char ** argv )
 	begin =get_time:: now();
 	WeightedIndex ( n, N, SA, LCP, ME, WSA, WLCP );
 
-	if ( mod == 2 )
-	{//print & check
-		cout << "n=" << n << " N=" << N << endl;
-		cout << sq << endl;
-		for ( int i = 0; i < WSA.size(); i++ )
-		{
-				cout << setw(3) << i << ": " <<  setw(3)<< WSA[i] << ", " << setw(3) << WLCP[i] << ", " << sq.substr(WSA[i], ME[WSA[i]]) << '\n';
-		}
-	}
-	if ( mod == 1 )
-	{//print & check
-		result << sq << '\n';
-		for ( int i = 0; i < N; i++ )
-		{
-			result << i << ":\t" << SA[i] << '\t' << iSA[i] << '\t' << LCP[i] << '\t' << sq.substr(SA[i], ME[SA[i]]) << '\n';
-		}
-	}
-	if ( mod == 3 )
-	{
-		 for ( int i = 0, j = -1; i < N; i++ )
-		 {
-			 if ( ME[SA[i]] != 0 )
-				 cout << setw(2) << ++j << ": " << setw(2) << SA[i] << ", " << sq.substr( SA[i], ME[SA[i]] ) << '\n';
-		 }
-	}
 	end = get_time::now();
 	auto diff2 = end - begin;
-	result<<"Time:  "<< chrono::duration_cast<chrono::milliseconds>(diff2).count()<<" ms "<<endl;
-#if 0
+	result<<"Time:  "<< chrono::duration_cast<chrono::milliseconds>(diff2).count()<<"ms "<<endl;
+#if 0 
 	for ( int i = 0; i < N; i++ )
 		if ( ME[SA[i]] != 0 )
 			result << sq.substr(SA[i], ME[SA[i]]) << '\n';
@@ -199,8 +124,6 @@ int main (int argc, char ** argv )
 	delete[] SA;
 	delete[] LCP;
 	delete[] ME;
-#endif
-#endif
 	return 0;
 }
 

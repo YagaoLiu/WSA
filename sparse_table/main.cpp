@@ -28,7 +28,6 @@ using namespace std;
 using get_time = chrono::steady_clock;
 
 double ** text;
-
 int main (int argc, char ** argv )
 {
 	TSwitch sw;
@@ -84,25 +83,14 @@ int main (int argc, char ** argv )
 			cout << "Error: z must be a positive number!\n";
 			return 0;
 		}
-		if ( sw.mod < 0 || sw.mod > 2 )
-		{
-			cout << "Error: Wrong mod select!\n";
-			return 0;
-		}
-		else
-		{
-			mod = sw.mod;
-		}
-		
 	}
 
 	/* read input */
-	if ( !read ( text_file, &text, &n ) )
+	if ( !read ( text_file, &text, n ) )
 	{
 		cout << "Error: Failed to read input!\n";
 		return 0;
 	}
-//	cout << "text length:" << n << endl;
 //	cout << "Finish reading input" << endl;
 	auto begin = get_time::now();
 //	cout << "index begin" << endl;
@@ -133,25 +121,6 @@ int main (int argc, char ** argv )
 	begin = get_time::now();
 	Rank_index ( sq, N, ME, SA );
 
-
-	if (mod == 1 ) //print & check
-	{
-//		result << sq << '\n';
-		for ( int i = 0; i < N; i++ )
-		{
-			if ( ME[SA[i]] != 0 )	
-				result << i << ":\t" << SA[i] << ",\t" << sq.substr(SA[i], ME[SA[i]]) << '\n';
-		}
-	}
-	if ( mod == 2 )
-	{
-		cout << sq <<endl;
-		for ( int i = 0; i < N; i++ )
-		{
-		if ( ME[SA[i]] != 0 )	
-			cout << i << ":\t" << SA[i] << ",\t" << sq.substr(SA[i], ME[SA[i]] ) << '\n';
-		}
-	}
 	end = get_time::now();
 	auto diff2 = end - begin;
 	result <<"Time:  "<< chrono::duration_cast<chrono::milliseconds>(diff2).count()<<" ms "<<endl;

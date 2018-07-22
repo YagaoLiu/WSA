@@ -50,24 +50,30 @@ std::istream & operator >> (std::istream& input, WeightedSequence &X) {
 void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
     if (!quiet) {
         result << "Finished reading input. Sequence length: " << length() << endl;
-        result << "Index construction started." << endl;
+//        result << "Index construction started." << endl;
     }
     auto begin = get_time::now();
     
     Estimation S(*this, z);
+	/*
     if (!quiet) {
         auto end = get_time::now();
         auto diff = end - begin;
         result << z << "-estimation constructed in " << chrono::duration_cast<chrono::milliseconds>(diff).count() << " milliseconds."<< endl;
-        result << z << "-estimation:" << endl << S;
+//        result << z << "-estimation:" << endl << S;
         result << endl;
     }
+	*/
     PropertyString T;
     for (PropertyString const & s : S.strings()) {
         T += s;
     }
+	begin = get_time::now();
     weighted_index = new PropertySuffixTree(T);
-    
+	auto end = get_time::now();
+	auto diff = end - begin;
+	result << "Indexing Time:" << chrono::duration_cast<chrono::milliseconds>(diff).count() << " ms" << endl;
+   /* 
     if (!quiet) {
         auto end = get_time::now();
         auto diff = end - begin;
@@ -75,6 +81,8 @@ void WeightedSequence::build_index(double z, bool quiet, std::ostream& result) {
         result << endl << "Property Suffix Tree:" << endl << *weighted_index;
         result << endl << "Answers to queries:" << endl;
     }
+	*/
+	
 }
 
 bool WeightedSequence::contains(std::string const& P) const {

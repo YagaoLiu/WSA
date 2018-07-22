@@ -44,19 +44,19 @@ Settings::Settings(): z(-1), quiet(false) {}
 
 Settings decode_switches (int argc, char * argv[]) {
     int opt;
-	Settings st;
-    while ( (opt = getopt_long ( argc, argv, "t:o:p:z:hq", long_options, NULL ) ) != -1 )
+    Settings st;
+    while ( (opt = getopt_long ( argc, argv, "t:o:p:z:q", long_options, NULL ) ) != -1 )
     {
         switch ( opt )
         {
             case 't':
-                st.text = optarg;
+                st.text = std::ifstream(optarg);
                 break;
             case 'p':
-                st.patterns = optarg;
+                st.patterns = std::ifstream(optarg);
                 break;
             case 'o':
-                st.output = optarg;
+                st.output = std::ofstream(optarg);
                 break;
             case 'z':
                 char* ep;

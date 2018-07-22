@@ -36,7 +36,7 @@ struct TSwitch
 
 int decode_switches ( int argc, char * argv[], TSwitch * sw );
 void usage ( void );
-int read ( string filename, double *** text, int * n );
+int read ( string filename, double***  text, int& n );
 int read_pattern ( string filename, string * pattern, int * m );
 void maximalSF ( double ** text, string & sq, int N, int n, double z,int * ME);
 int multi_match ( string * pattern, int num_pattern, string & text, int n, int * SA, int * LCP, int * ME, list<int> & Occ );
