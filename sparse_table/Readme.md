@@ -1,4 +1,4 @@
-Weighted Suffix Array
+Weighted Suffix Array (ST-PSA algorithm)
 ===
 
 <b>Basic Instructions:</b>
