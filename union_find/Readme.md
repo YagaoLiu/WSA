@@ -1,4 +1,4 @@
-Weighted Suffix Array
+Weighted Suffix Array based on UF-PSA Algorithm
 ===
 
 <b>Basic Instructions:</b>
